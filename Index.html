@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .weather-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      width: 350px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      color: white;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #fff;
+      color: #007BFF;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #f0f0f0;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1rem;
+    }
+
+    .city-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .temp {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    .info {
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .fact {
+      margin-top: 15px;
+      font-style: italic;
+      color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-container">
+    <h2>🌤 Weather App</h2>
+    <input type="text" id="cityInput" placeholder="Enter city name..." />
+    <br />
+    <button onclick="getWeather()">Get Weather</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const cityFacts = {
+      "mumbai": "Mumbai is the financial capital of India, home to Bollywood and the Gateway of India.",
+      "delhi": "Delhi, India's capital, boasts rich history with landmarks like Red Fort and India Gate.",
+      "bangalore": "Bangalore is India's tech hub and known as the 'Silicon Valley of India'.",
+      "hyderabad": "Hyderabad is famous for its biryani, Charminar, and pearl trading.",
+      "dewas": "Dewas is known for its Chamunda Mata Temple and industrial development.",
+      "indore": "Indore is India's cleanest city and a foodie’s paradise.",
+      "kolkata": "Kolkata is known for its colonial architecture, culture, and the Howrah Bridge.",
+      "chennai": "Chennai is a cultural hub with temples, beaches, and classical music.",
+      "pune": "Pune is an educational and IT hub with a vibrant youth culture.",
+      "jaipur": "Jaipur, the Pink City, is famous for its palaces and forts.",
+      "ahmedabad": "Ahmedabad is known for its textiles, Sabarmati Ashram, and historical significance.",
+      "varanasi": "Varanasi is one of the oldest cities in the world, famous for ghats and spiritual heritage.",
+      "goa": "Goa is renowned for its beaches, nightlife, and Portuguese heritage.",
+      "lucknow": "Lucknow is the city of nawabs, known for its kebabs and rich culture.",
+      "bhopal": "Bhopal, the City of Lakes, blends scenic beauty with historical monuments."
+    };
+
+    async function getWeather() {
+      const city = document.getElementById('cityInput').value.trim();
+      const apiKey = '078c696b15ba4dee8fd40339251205';
+      const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=yes`; #here use your weather api
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("City not found");
+        const data = await response.json();
+
+        const cityKey = data.location.name.toLowerCase();
+        const fact = cityFacts[cityKey] || "This city has its own unique charm. Explore and enjoy!";
+
+        const weatherHTML = `
+          <div class="city-name">${data.location.name}, ${data.location.country}</div>
+          <div class="temp">${data.current.temp_c}&deg;C</div>
+          <div class="info">Condition: ${data.current.condition.text}</div>
+          <div class="info">Feels Like: ${data.current.feelslike_c}&deg;C</div>
+          <div class="info">Humidity: ${data.current.humidity}%</div>
+          <div class="info">Air Quality (PM2.5): ${data.current.air_quality.pm2_5.toFixed(2)}</div>
+          <div class="fact">✨ ${fact}</div>
+        `;
+
+        document.getElementById('result').innerHTML = weatherHTML;
+      } catch (error) {
+        document.getElementById('result').innerHTML = '<p style="color:red;">Error: ' + error.message + '</p>';
+      }
+    }
+  </script>
+</body>
+</html>
